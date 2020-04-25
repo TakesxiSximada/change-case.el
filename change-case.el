@@ -1,9 +1,6 @@
 ;;; change-case.el --- the grand overview  -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020 sximada
-;;
-;; You should have received a copy of the AUTHORS.md file which
-;; lists all contributors.  If not, see http://magit.vc/authors.
 
 ;; Author: Takeshi Shimada <sximada@gmail.com>
 ;; Maintainer: Takeshi Shimada <sximada@gmail.com>
@@ -22,7 +19,7 @@
 ;; License for more details.
 ;;
 ;; You should have received a copy of the GNU General Public License
-;; along with Magit.  If not, see http://www.gnu.org/licenses.
+;; along with change-case.el.  If not, see http://www.gnu.org/licenses.
 
 ;;; Commentary:
 
