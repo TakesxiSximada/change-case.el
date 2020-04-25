@@ -4,7 +4,7 @@
 
 ;; Author: Takeshi Shimada <sximada@gmail.com>
 ;; Maintainer: Takeshi Shimada <sximada@gmail.com>
-;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
+;; Repository: https://gist.github.com/819e066481b57f8ea6e5a8ec92fb9c27.git
 ;; Version: 1
 ;; Date: 2020-04-25
 
