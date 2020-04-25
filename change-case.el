@@ -4,8 +4,8 @@
 
 ;; Author: Takeshi Shimada <sximada@gmail.com>
 ;; Maintainer: Takeshi Shimada <sximada@gmail.com>
-;; Repository: https://gist.github.com/819e066481b57f8ea6e5a8ec92fb9c27.git
-;; Version: 1
+;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
+;; Version: 2
 ;; Date: 2020-04-25
 
 ;; change-case.el is free software; you can redistribute it and/or modify it
@@ -135,12 +135,12 @@
 				   change-case-camel-case-parse))
 
 
-(defvar change-case-render-alist '(change-case-dotted-case-render
-				   change-case-path-case-render
-				   change-case-snake-case-render
-				   change-case-kebab-case-render
-				   change-case-pascal-case-render
-				   change-case-camel-case-render))
+(defvar change-case-renderer-alist '(change-case-dotted-case-render
+				     change-case-path-case-render
+				     change-case-snake-case-render
+				     change-case-kebab-case-render
+				     change-case-pascal-case-render
+				     change-case-camel-case-render))
 
 
 ;;; U/I
@@ -152,6 +152,12 @@
   (intern
    (ido-completing-read prompt
 			(mapcar 'symbol-name change-case-parser-alist))))
+
+
+(defun change-case-select-renderer (prompt)
+  (intern
+   (ido-completing-read prompt
+			(mapcar 'symbol-name change-case-renderer-alist))))
 
 
 ;;;###autoload
