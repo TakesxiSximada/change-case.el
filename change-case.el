@@ -2,8 +2,8 @@
 
 ;; Copyright (C) 2020 sximada
 
-;; Author: Takeshi Shimada <sximada@gmail.com>
-;; Maintainer: Takeshi Shimada <sximada@gmail.com>
+;; Author: sximada <sximada@gmail.com>
+;; Maintainer: sximada <sximada@gmail.com>
 ;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
 ;; Version: 2
 ;; Date: 2020-04-25
