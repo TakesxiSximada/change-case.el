@@ -5,7 +5,7 @@
 ;; Author: sximada <sximada@gmail.com>
 ;; Maintainer: sximada <sximada@gmail.com>
 ;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
-;; Version: 3
+;; Version: 4
 ;; Date: 2020-04-26
 
 ;; change-case.el is free software; you can redistribute it and/or modify it
@@ -27,6 +27,9 @@
 
 ;; Release note:
 ;;
+;; * 4 (2020-04-26)
+;; - Added ability to remember previous parsing and renderers.
+;;
 ;; * 3 (2020-04-26)
 ;; - Added ert tests.
 ;; - Added Release note.
@@ -36,7 +39,7 @@
 ;; - Added dotted/case.
 ;;
 ;; * 1 (2020-04-25)
-;; - First implements. 
+;; - First implements.
 ;; - Supported case.
 ;;   - snake_case
 ;;   - kebab_case
@@ -61,7 +64,7 @@
   (string-join word-list change-case-dotted-case-separator))
 
 
-;; test 
+;; test
 (ert-deftest change-case-dotted-case-parse-test ()
   (should
    (equal '("change" "case" "el")
@@ -84,7 +87,7 @@
   (string-join word-list change-case-path-case-separator))
 
 
-;; test 
+;; test
 (ert-deftest change-case-path-case-parse-test ()
   (should
    (equal '("change" "case" "el")
@@ -109,7 +112,7 @@
 	       change-case-snake-case-separator))
 
 
-;; test 
+;; test
 (ert-deftest change-case-snake-case-parse-test ()
   (should
    (equal '("change" "case" "el")
@@ -133,7 +136,7 @@
   (string-join (mapcar 'downcase word-list) change-case-kebab-case-separator))
 
 
-;; test 
+;; test
 (ert-deftest change-case-kebab-case-parse-test ()
   (should
    (equal '("change" "case" "el")
@@ -163,14 +166,14 @@
 
 
 (defun change-case-get-index-pair-list (num-list)
-  (cons (-slice num-list 0 2) 
+  (cons (-slice num-list 0 2)
 	(if-let* ((after (-slice num-list 1)))
 	    (change-case-get-index-pair-list after))))
 
 
 (defun change-case-pascal-case-parse (sentence)
   (mapcar
-   (lambda (pair) (downcase 
+   (lambda (pair) (downcase
 		   (substring sentence
 			      (car pair)
 			      (car (cdr pair)))))
@@ -178,10 +181,10 @@
 
 
 (defun change-case-pascal-case-render (word-list)
-  (string-join (mapcar 'capitalize word-list))) 
+  (string-join (mapcar 'capitalize word-list)))
 
 
-;; test 
+;; test
 (ert-deftest change-case-pascal-case-parse-test ()
   (should
    (equal '("change" "case" "el")
@@ -199,12 +202,12 @@
 
 
 (defun change-case-camel-case-render (word-list)
-  (concat 
+  (concat
    (downcase (car word-list))
    (change-case-pascal-case-render (cdr word-list))))
 
 
-;; test 
+;; test
 (ert-deftest change-case-camel-case-parse-test ()
   (should
    (equal '("change" "case" "el")
@@ -237,17 +240,20 @@
 (defvar change-case-parser-prompt "change-case: parser:")
 (defvar change-case-renderer-prompt "change-case: renderer:")
 
+(defvar change-case-parser-default nil)
+(defvar change-case-renderer-default nil)
 
-(defun change-case-select-parser (prompt)
+(defun change-case-select-parser (prompt default)
   (intern
    (ido-completing-read prompt
-			(mapcar 'symbol-name change-case-parser-alist))))
+			(mapcar 'symbol-name change-case-parser-alist)
+			nil nil nil nil default)))
 
-
-(defun change-case-select-renderer (prompt)
+(defun change-case-select-renderer (prompt default)
   (intern
    (ido-completing-read prompt
-			(mapcar 'symbol-name change-case-renderer-alist))))
+			(mapcar 'symbol-name change-case-renderer-alist)
+			nil nil nil nil default)))
 
 
 ;;;###autoload
@@ -257,15 +263,22 @@
 		 `(,@(if (use-region-p)
 			 (list (region-beginning) (region-end))
 		       (list nil nil))
-		   ,(change-case-select-parser change-case-parser-prompt)
-		   ,(change-case-select-renderer change-case-renderer-prompt))))
+		   ,(change-case-select-parser change-case-parser-prompt
+					       (when change-case-parser-default
+						 (symbol-name change-case-parser-default)))
+		   ,(change-case-select-renderer change-case-renderer-prompt
+						 (when change-case-renderer-default
+						   (symbol-name change-case-renderer-default))))))
   (let ((sentence (funcall render
 			   (funcall parser
 				    (buffer-substring-no-properties start end)))))
     (delete-region start end)
     (save-excursion
       (goto-char start)
-      (insert sentence))))
+      (insert sentence)))
+  (setq change-case-parser-default parser)
+  (setq change-case-renderer-default render))
+
 
 ;;; _
 (provide 'change-case)
