@@ -220,64 +220,62 @@
 
 
 ;;; Options
-(defvar change-case-parser-alist '(change-case-dotted-case-parse
-				   change-case-path-case-parse
-				   change-case-snake-case-parse
-				   change-case-kebab-case-parse
-				   change-case-pascal-case-parse
-				   change-case-camel-case-parse))
+(defvar change-case-parser-alist
+  '(("dotted.case" . change-case-dotted-case-parse)
+    ("path/case" . change-case-path-case-parse)
+    ("snake_case" . change-case-snake-case-parse)
+    ("kebab-case" . change-case-kebab-case-parse)
+    ("PascalCase" . change-case-pascal-case-parse)
+    ("camelCase" . change-case-camel-case-parse)))
 
 
-(defvar change-case-renderer-alist '(change-case-dotted-case-render
-				     change-case-path-case-render
-				     change-case-snake-case-render
-				     change-case-kebab-case-render
-				     change-case-pascal-case-render
-				     change-case-camel-case-render))
+(defvar change-case-renderer-alist
+  '(("dotted.case" . change-case-dotted-case-render)
+    ("path/case" . change-case-path-case-render)
+    ("snake_case" . change-case-snake-case-render)
+    ("kebab-case" . change-case-kebab-case-render)
+    ("PascalCase" . change-case-pascal-case-render)
+    ("camelCase" . change-case-camel-case-render)))
 
 
 ;;; U/I
 (defvar change-case-parser-prompt "change-case: parser:")
 (defvar change-case-renderer-prompt "change-case: renderer:")
 
-(defvar change-case-parser-default nil)
-(defvar change-case-renderer-default nil)
+(defvar change-case-parser-default "dotted.case")
+(defvar change-case-renderer-default "dotted.case")
 
-(defun change-case-select-parser (prompt default)
-  (intern
-   (ido-completing-read prompt
-			(mapcar 'symbol-name change-case-parser-alist)
-			nil nil nil nil default)))
-
-(defun change-case-select-renderer (prompt default)
-  (intern
-   (ido-completing-read prompt
-			(mapcar 'symbol-name change-case-renderer-alist)
-			nil nil nil nil default)))
-
+(defun change-case-select-ui (prompt choices default)
+  (ido-completing-read prompt
+		       choices
+		       nil nil nil nil
+		       default))
 
 ;;;###autoload
-(defun change-case (&optional start end  parser render)
+(defun change-case (&optional start end  parser renderer)
   (interactive (progn
                  (barf-if-buffer-read-only)
 		 `(,@(if (use-region-p)
 			 (list (region-beginning) (region-end))
 		       (list nil nil))
-		   ,(change-case-select-parser change-case-parser-prompt
-					       (when change-case-parser-default
-						 (symbol-name change-case-parser-default)))
-		   ,(change-case-select-renderer change-case-renderer-prompt
-						 (when change-case-renderer-default
-						   (symbol-name change-case-renderer-default))))))
-  (let ((sentence (funcall render
+		   ,(cdr (assoc (change-case-select-ui change-case-parser-prompt
+						       (mapcar 'car change-case-parser-alist)
+						       change-case-renderer-default)
+				change-case-parser-alist))
+		   ,(cdr (assoc (change-case-select-ui change-case-renderer-prompt
+						       (mapcar 'car change-case-renderer-alist)
+						       change-case-renderer-default)
+				change-case-renderer-alist)))))
+  
+  (let ((sentence (funcall renderer
 			   (funcall parser
 				    (buffer-substring-no-properties start end)))))
     (delete-region start end)
     (save-excursion
       (goto-char start)
       (insert sentence)))
-  (setq change-case-parser-default parser)
-  (setq change-case-renderer-default render))
+  (setq change-case-parser-default (car (rassoc parser change-case-parser-alist)))
+  (setq change-case-renderer-default (car (rassoc renderer change-case-renderer-alist))))
 
 
 ;;; _
