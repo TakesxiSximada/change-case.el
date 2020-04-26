@@ -1,4 +1,0 @@
-#+TITLE: change-case.el 
-
-
-[[https://giphy.com/embed/kaOE3qOXzoZQ0zxpea]]
