@@ -5,7 +5,7 @@
 ;; Author: sximada <sximada@gmail.com>
 ;; Maintainer: sximada <sximada@gmail.com>
 ;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
-;; Version: 4
+;; Version: 5
 ;; Date: 2020-04-26
 
 ;; change-case.el is free software; you can redistribute it and/or modify it
@@ -26,6 +26,9 @@
 ;; This library implements the change case functions.
 
 ;; Release note:
+;;
+;; * 5 (2020-04-26)
+;; - Added defgroup and descriptions.
 ;;
 ;; * 4 (2020-04-26)
 ;; - Added ability to remember previous parsing and renderers.
@@ -52,9 +55,14 @@
 (require 's)
 
 
-;;; dotted.case
-(defvar change-case-dotted-case-separator ".")
+;;; Options
+(defgroup change-case nil
+  "Case conversion."
+  :prefix "change-case")
 
+;;; dotted.case
+(defvar change-case-dotted-case-separator "."
+  "Used as delimiter in doted case.")
 
 (defun change-case-dotted-case-parse (sentence)
   (s-split (regexp-quote change-case-dotted-case-separator)
@@ -77,8 +85,8 @@
 
 
 ;;; path/case
-(defvar change-case-path-case-separator "/")
-
+(defvar change-case-path-case-separator "/"
+  "Used as delimiter in path case.")
 
 (defun change-case-path-case-parse (sentence)
   (s-split change-case-path-case-separator sentence))
@@ -100,8 +108,8 @@
 
 
 ;;; snake_case
-(defvar change-case-snake-case-separator "_")
-
+(defvar change-case-snake-case-separator "_"
+  "Used as delimiter in snake case.")
 
 (defun change-case-snake-case-parse (sentence)
   (s-split change-case-snake-case-separator sentence))
@@ -125,8 +133,8 @@
 
 
 ;;; kebab-case
-(defvar change-case-kebab-case-separator "-")
-
+(defvar change-case-kebab-case-separator "-"
+  "Used as delimiter in kebab case.")
 
 (defun change-case-kebab-case-parse (sentence)
   (s-split change-case-kebab-case-separator sentence))
@@ -149,8 +157,8 @@
 
 
 ;;; PascalCase
-(defvar change-case-upper-case-pattern "[A-Z]")
-
+(defvar change-case-upper-case-pattern
+  "Used as delimiter in pascal case.")
 
 (defun change-case-get-index (sentence pos)
   (if (= pos 0) 0
@@ -158,18 +166,15 @@
       (string-match change-case-upper-case-pattern
 		    sentence pos))))
 
-
 (defun change-case-get-index-list (sentence pos)
   (if-let* ((n (change-case-get-index sentence pos))
 	    (n+1 (+ n 1)))
       (cons n (change-case-get-index-list sentence n+1))))
 
-
 (defun change-case-get-index-pair-list (num-list)
   (cons (-slice num-list 0 2)
 	(if-let* ((after (-slice num-list 1)))
 	    (change-case-get-index-pair-list after))))
-
 
 (defun change-case-pascal-case-parse (sentence)
   (mapcar
@@ -178,7 +183,6 @@
 			      (car pair)
 			      (car (cdr pair)))))
    (change-case-get-index-pair-list (change-case-get-index-list sentence 0))))
-
 
 (defun change-case-pascal-case-render (word-list)
   (string-join (mapcar 'capitalize word-list)))
@@ -200,7 +204,6 @@
 (defun change-case-camel-case-parse (sentence)
   (change-case-pascal-case-parse sentence))
 
-
 (defun change-case-camel-case-render (word-list)
   (concat
    (downcase (car word-list))
@@ -218,7 +221,6 @@
    (string-equal "changeCaseEl"
 		 (change-case-camel-case-render '("change" "case" "el")))))
 
-
 ;;; Options
 (defvar change-case-parser-alist
   '(("dotted.case" . change-case-dotted-case-parse)
@@ -226,8 +228,8 @@
     ("snake_case" . change-case-snake-case-parse)
     ("kebab-case" . change-case-kebab-case-parse)
     ("PascalCase" . change-case-pascal-case-parse)
-    ("camelCase" . change-case-camel-case-parse)))
-
+    ("camelCase" . change-case-camel-case-parse))
+  "List of valid parser functions.")
 
 (defvar change-case-renderer-alist
   '(("dotted.case" . change-case-dotted-case-render)
@@ -235,15 +237,28 @@
     ("snake_case" . change-case-snake-case-render)
     ("kebab-case" . change-case-kebab-case-render)
     ("PascalCase" . change-case-pascal-case-render)
-    ("camelCase" . change-case-camel-case-render)))
+    ("camelCase" . change-case-camel-case-render))
+  "List of valid render functions.")
 
 
 ;;; U/I
-(defvar change-case-parser-prompt "change-case: parser:")
-(defvar change-case-renderer-prompt "change-case: renderer:")
+(defcustom change-case-parser-prompt "change-case: parser:"
+  "Prompt used in the parser function selection UI."
+  :group 'change-case)
 
-(defvar change-case-parser-default "dotted.case")
-(defvar change-case-renderer-default "dotted.case")
+(defcustom change-case-renderer-prompt "change-case: renderer:"
+  "Prompt used in the render function selection UI."
+  :group 'change-case)
+
+
+(defcustom change-case-parser-default "dotted.case"
+  "Default parser."
+  :group 'change-case)
+
+(defcustom change-case-renderer-default "dotted.case"
+  "Default renderer."
+  :group 'change-case)
+
 
 (defun change-case-select-ui (prompt choices default)
   (ido-completing-read prompt
@@ -266,7 +281,7 @@
 						       (mapcar 'car change-case-renderer-alist)
 						       change-case-renderer-default)
 				change-case-renderer-alist)))))
-  
+
   (let ((sentence (funcall renderer
 			   (funcall parser
 				    (buffer-substring-no-properties start end)))))
