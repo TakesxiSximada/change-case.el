@@ -1,12 +1,12 @@
-;;; change-case.el --- the grand overview  -*- lexical-binding: t -*-
+;;; change-case.el --- Case conversion between camelCase, PascalCase, snake_case and more -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2020 sximada
 
 ;; Author: sximada <sximada@gmail.com>
 ;; Maintainer: sximada <sximada@gmail.com>
 ;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
-;; Version: 2
-;; Date: 2020-04-25
+;; Version: 3
+;; Date: 2020-04-26
 
 ;; change-case.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -25,10 +25,28 @@
 
 ;; This library implements the change case functions.
 
-;;; Code:
+;; Release note:
+;;
+;; * 3 (2020-04-26)
+;; - Added ert tests.
+;; - Added Release note.
+;;
+;; * 2 (2020-04-25)
+;; - Added path/case.
+;; - Added dotted/case.
+;;
+;; * 1 (2020-04-25)
+;; - First implements. 
+;; - Supported case.
+;;   - snake_case
+;;   - kebab_case
+;;   - PascalCase
+;;   - camelCase
 
-(require 's)
+;;; Code:
 (require 'dash)
+(require 'ert)
+(require 's)
 
 
 ;;; dotted.case
@@ -36,11 +54,23 @@
 
 
 (defun change-case-dotted-case-parse (sentence)
-  (s-split change-case-dotted-case-separator sentence))
-
+  (s-split (regexp-quote change-case-dotted-case-separator)
+	   sentence))
 
 (defun change-case-dotted-case-render (word-list)
   (string-join word-list change-case-dotted-case-separator))
+
+
+;; test 
+(ert-deftest change-case-dotted-case-parse-test ()
+  (should
+   (equal '("change" "case" "el")
+	  (change-case-dotted-case-parse "change.case.el"))))
+
+(ert-deftest change-case-dotted-case-renderer-test ()
+  (should
+   (string-equal "change.case.el"
+		 (change-case-dotted-case-render '("change" "case" "el")))))
 
 
 ;;; path/case
@@ -50,9 +80,20 @@
 (defun change-case-path-case-parse (sentence)
   (s-split change-case-path-case-separator sentence))
 
-
 (defun change-case-path-case-render (word-list)
   (string-join word-list change-case-path-case-separator))
+
+
+;; test 
+(ert-deftest change-case-path-case-parse-test ()
+  (should
+   (equal '("change" "case" "el")
+	  (change-case-path-case-parse "change/case/el"))))
+
+(ert-deftest change-case-path-case-renderer-test ()
+  (should
+   (string-equal "change/case/el"
+		 (change-case-path-case-render '("change" "case" "el")))))
 
 
 ;;; snake_case
@@ -68,6 +109,18 @@
 	       change-case-snake-case-separator))
 
 
+;; test 
+(ert-deftest change-case-snake-case-parse-test ()
+  (should
+   (equal '("change" "case" "el")
+	  (change-case-snake-case-parse "change_case_el"))))
+
+(ert-deftest change-case-snake-case-renderer-test ()
+  (should
+   (string-equal "change_case_el"
+		 (change-case-snake-case-render '("change" "case" "el")))))
+
+
 ;;; kebab-case
 (defvar change-case-kebab-case-separator "-")
 
@@ -78,6 +131,18 @@
 
 (defun change-case-kebab-case-render (word-list)
   (string-join (mapcar 'downcase word-list) change-case-kebab-case-separator))
+
+
+;; test 
+(ert-deftest change-case-kebab-case-parse-test ()
+  (should
+   (equal '("change" "case" "el")
+	  (change-case-kebab-case-parse "change-case-el"))))
+
+(ert-deftest change-case-kebab-case-renderer-test ()
+  (should
+   (string-equal "change-case-el"
+		 (change-case-kebab-case-render '("change" "case" "el")))))
 
 
 ;;; PascalCase
@@ -105,14 +170,27 @@
 
 (defun change-case-pascal-case-parse (sentence)
   (mapcar
-   (lambda (pair) (substring sentence
-			     (car pair)
-			     (car (cdr pair))))
+   (lambda (pair) (downcase 
+		   (substring sentence
+			      (car pair)
+			      (car (cdr pair)))))
    (change-case-get-index-pair-list (change-case-get-index-list sentence 0))))
 
 
 (defun change-case-pascal-case-render (word-list)
   (string-join (mapcar 'capitalize word-list))) 
+
+
+;; test 
+(ert-deftest change-case-pascal-case-parse-test ()
+  (should
+   (equal '("change" "case" "el")
+	  (change-case-pascal-case-parse "ChangeCaseEl"))))
+
+(ert-deftest change-case-pascal-case-renderer-test ()
+  (should
+   (string-equal "ChangeCaseEl"
+		 (change-case-pascal-case-render '("change" "case" "el")))))
 
 
 ;;; camelCase
@@ -124,6 +202,18 @@
   (concat 
    (downcase (car word-list))
    (change-case-pascal-case-render (cdr word-list))))
+
+
+;; test 
+(ert-deftest change-case-camel-case-parse-test ()
+  (should
+   (equal '("change" "case" "el")
+	  (change-case-camel-case-parse "changeCaseEl"))))
+
+(ert-deftest change-case-camel-case-renderer-test ()
+  (should
+   (string-equal "changeCaseEl"
+		 (change-case-camel-case-render '("change" "case" "el")))))
 
 
 ;;; Options
