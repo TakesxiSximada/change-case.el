@@ -25,7 +25,7 @@ Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.
 
 **This package is not yet melpa packaging.**
 
-1. Download (https://gist.githubusercontent.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27/raw/9bbd7c116540133b945bc70e9fb38912fa8a72ff/change-case.el)[change-case.el]. 
+1. Download [change-case.el](https://gist.githubusercontent.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27/raw/9bbd7c116540133b945bc70e9fb38912fa8a72ff/change-case.el). 
 2. M-x package-install-file RET /PATH/TO/DOWNLOADED/change-case.el RET
 
 ## Testing
