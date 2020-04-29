@@ -5,8 +5,8 @@
 ;; Author: sximada <sximada@gmail.com>
 ;; Maintainer: sximada <sximada@gmail.com>
 ;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
-;; Version: 5
-;; Date: 2020-04-26
+;; Version: 6
+;; Date: 2020-04-28
 
 ;; change-case.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -26,6 +26,10 @@
 ;; This library implements the change case functions.
 
 ;; Release note:
+;;
+;; * 6 (2020-04-28)
+;; - Fixed pascal case pattern bug.
+;; - Fixed to get bounds by `bounds-of-things-at-point` if no bounds are specified.
 ;;
 ;; * 5 (2020-04-26)
 ;; - Added defgroup and descriptions.
@@ -157,7 +161,7 @@
 
 
 ;;; PascalCase
-(defvar change-case-upper-case-pattern
+(defvar change-case-upper-case-pattern "[A-Z]"
   "Used as delimiter in pascal case.")
 
 (defun change-case-get-index (sentence pos)
@@ -166,22 +170,25 @@
       (string-match change-case-upper-case-pattern
 		    sentence pos))))
 
-(defun change-case-get-index-list (sentence pos)
-  (if-let* ((n (change-case-get-index sentence pos))
-	    (n+1 (+ n 1)))
-      (cons n (change-case-get-index-list sentence n+1))))
 
 (defun change-case-get-index-pair-list (num-list)
   (cons (-slice num-list 0 2)
 	(if-let* ((after (-slice num-list 1)))
 	    (change-case-get-index-pair-list after))))
 
+
+(defun change-case-pascal-case-get-head-char-index-list (sentence pos)
+  "文字列中のPascalCaseの先頭文字の位置のリストを返す."
+  (if-let* ((n (change-case-get-index sentence pos))
+	    (n+1 (+ n 1)))
+      (cons n (change-case-get-index-list sentence n+1))))
+
+
 (defun change-case-pascal-case-parse (sentence)
   (mapcar
-   (lambda (pair) (downcase
-		   (substring sentence
-			      (car pair)
-			      (car (cdr pair)))))
+   (lambda (pair) (substring sentence
+			     (car pair)
+			     (car (cdr pair))))
    (change-case-get-index-pair-list (change-case-get-index-list sentence 0))))
 
 (defun change-case-pascal-case-render (word-list)
@@ -189,9 +196,15 @@
 
 
 ;; test
+(ert-deftest change-case-pascal-case-get-head-char-index-list-test ()
+  (should
+   (equal '(0 6 10)
+	  (change-case-pascal-case-get-head-char-index-list "ChangeCaseEl" 0))))
+
+
 (ert-deftest change-case-pascal-case-parse-test ()
   (should
-   (equal '("change" "case" "el")
+   (equal '("Change" "Case" "El")
 	  (change-case-pascal-case-parse "ChangeCaseEl"))))
 
 (ert-deftest change-case-pascal-case-renderer-test ()
@@ -213,7 +226,7 @@
 ;; test
 (ert-deftest change-case-camel-case-parse-test ()
   (should
-   (equal '("change" "case" "el")
+   (equal '("change" "Case" "El")
 	  (change-case-camel-case-parse "changeCaseEl"))))
 
 (ert-deftest change-case-camel-case-renderer-test ()
@@ -259,39 +272,51 @@
   "Default renderer."
   :group 'change-case)
 
-
 (defun change-case-select-ui (prompt choices default)
   (ido-completing-read prompt
 		       choices
 		       nil nil nil nil
 		       default))
 
-;;;###autoload
-(defun change-case (&optional start end  parser renderer)
-  (interactive (progn
-                 (barf-if-buffer-read-only)
-		 `(,@(if (use-region-p)
-			 (list (region-beginning) (region-end))
-		       (list nil nil))
-		   ,(cdr (assoc (change-case-select-ui change-case-parser-prompt
-						       (mapcar 'car change-case-parser-alist)
-						       change-case-renderer-default)
-				change-case-parser-alist))
-		   ,(cdr (assoc (change-case-select-ui change-case-renderer-prompt
-						       (mapcar 'car change-case-renderer-alist)
-						       change-case-renderer-default)
-				change-case-renderer-alist)))))
+(defun change-case-select-parser ()
+  (cdr (assoc (change-case-select-ui change-case-parser-prompt
+				     (mapcar 'car change-case-parser-alist)
+				     change-case-parser-default)
+	      change-case-parser-alist)))
 
-  (let ((sentence (funcall renderer
-			   (funcall parser
-				    (buffer-substring-no-properties start end)))))
-    (delete-region start end)
-    (save-excursion
-      (goto-char start)
-      (insert sentence)))
+(defun change-case-select-renderer ()
+  (cdr (assoc (change-case-select-ui change-case-renderer-prompt
+				     (mapcar 'car change-case-renderer-alist)
+				     change-case-renderer-default)
+	      change-case-renderer-alist)))
+
+(defun change-case-edit (start end sentence)
+  (delete-region start end)
+  (save-excursion
+    (goto-char start)
+    (insert sentence)))
+
+(defun change-case-update-parser-and-renderer-default (parser renderer)
   (setq change-case-parser-default (car (rassoc parser change-case-parser-alist)))
   (setq change-case-renderer-default (car (rassoc renderer change-case-renderer-alist))))
 
+
+;;;###autoload
+(defun change-case (&optional start end)
+  (interactive (if (use-region-p)
+		   (list (region-beginning) (region-end))
+		 (if-let (bounds (bounds-of-thing-at-point 'symbol)) 
+		     (list (car bounds) (cdr bounds))
+		   (list (point-min (point-max))))))
+
+  (let ((sentence (buffer-substring-no-properties start end))
+	(parser (change-case-select-parser))
+	(renderer (change-case-select-renderer)))
+    (change-case-edit 
+     start end
+     (funcall renderer (funcall parser sentence)))
+    (change-case-update-parser-and-renderer-default parser
+						    renderer)))
 
 ;;; _
 (provide 'change-case)
