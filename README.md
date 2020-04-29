@@ -49,3 +49,10 @@ Finished at:  2020-04-29 15:28:31+0900
 
 .............
 ```
+
+## Bug report and Contributing
+
+We haven't prepared those flows yet. For the time being, please write the steps 
+to reproduce the bug in this gist comment, or attach the patch file in diff format.
+Welcome them.
+
