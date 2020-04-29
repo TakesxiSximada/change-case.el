@@ -178,7 +178,7 @@
 
 
 (defun change-case-pascal-case-get-head-char-index-list (sentence pos)
-  "文字列中のPascalCaseの先頭文字の位置のリストを返す."
+  "Returns a list of the position of the first character of PascalCase in the string"
   (if-let* ((n (change-case-get-index sentence pos))
 	    (n+1 (+ n 1)))
       (cons n (change-case-get-index-list sentence n+1))))
