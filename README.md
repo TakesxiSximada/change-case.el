@@ -1,7 +1,6 @@
 # change-case.el
 
-Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.case and others by Emacs Lisp. Inspired by https://www.npmjs.com/package/change-case.
-
+Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.case and others by Emacs Lisp. Inspired by https://github.com/blakeembrey/change-case/ . 
 #### Screenshot
 
 ![example](https://media.giphy.com/media/kaOE3qOXzoZQ0zxpea/source.gif "example")
