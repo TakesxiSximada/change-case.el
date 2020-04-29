@@ -2,6 +2,10 @@
 
 Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.case and others by Emacs Lisp. Inspired by https://www.npmjs.com/package/change-case.
 
+#### Screenshot
+
+![example](https://media.giphy.com/media/kaOE3qOXzoZQ0zxpea/source.gif "example")
+
 ## Supported case
 
 - [x] dotted.case
@@ -23,11 +27,6 @@ Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.
 
 1. Download change-case.el.
 2. M-x package-install-file RET /PATH/TO/DOWNLOADED/change-case.el RET
-
-## Screenshot
-
-![example](https://media.giphy.com/media/kaOE3qOXzoZQ0zxpea/source.gif "example")
-
 
 ## Testing
 
