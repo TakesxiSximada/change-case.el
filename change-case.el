@@ -5,8 +5,8 @@
 ;; Author: sximada <sximada@gmail.com>
 ;; Maintainer: sximada <sximada@gmail.com>
 ;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
-;; Version: 6
-;; Date: 2020-04-28
+;; Version: 7
+;; Date: 2020-05-02
 
 ;; change-case.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
@@ -26,6 +26,9 @@
 ;; This library implements the change case functions.
 
 ;; Release note:
+;;
+;; * 7 (2020-05-02)
+;; - Fixed pascal case bug.
 ;;
 ;; * 6 (2020-04-28)
 ;; - Fixed pascal case pattern bug.
@@ -181,7 +184,7 @@
   "Returns a list of the position of the first character of PascalCase in the string"
   (if-let* ((n (change-case-get-index sentence pos))
 	    (n+1 (+ n 1)))
-      (cons n (change-case-get-index-list sentence n+1))))
+      (cons n (change-case-pascal-case-get-head-char-index-list sentence n+1))))
 
 
 (defun change-case-pascal-case-parse (sentence)
@@ -189,7 +192,9 @@
    (lambda (pair) (substring sentence
 			     (car pair)
 			     (car (cdr pair))))
-   (change-case-get-index-pair-list (change-case-get-index-list sentence 0))))
+   (change-case-get-index-pair-list 
+    (change-case-pascal-case-get-head-char-index-list sentence 0))))
+
 
 (defun change-case-pascal-case-render (word-list)
   (string-join (mapcar 'capitalize word-list)))
