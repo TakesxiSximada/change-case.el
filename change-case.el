@@ -25,37 +25,6 @@
 
 ;; This library implements the change case functions.
 
-;; Release note:
-;;
-;; * 7 (2020-05-02)
-;; - Fixed pascal case bug.
-;;
-;; * 6 (2020-04-28)
-;; - Fixed pascal case pattern bug.
-;; - Fixed to get bounds by `bounds-of-things-at-point` if no bounds are specified.
-;;
-;; * 5 (2020-04-26)
-;; - Added defgroup and descriptions.
-;;
-;; * 4 (2020-04-26)
-;; - Added ability to remember previous parsing and renderers.
-;;
-;; * 3 (2020-04-26)
-;; - Added ert tests.
-;; - Added Release note.
-;;
-;; * 2 (2020-04-25)
-;; - Added path/case.
-;; - Added dotted/case.
-;;
-;; * 1 (2020-04-25)
-;; - First implements.
-;; - Supported case.
-;;   - snake_case
-;;   - kebab_case
-;;   - PascalCase
-;;   - camelCase
-
 ;;; Code:
 (require 'dash)
 (require 'ert)
