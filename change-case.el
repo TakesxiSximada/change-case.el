@@ -1,12 +1,14 @@
 ;;; change-case.el --- Case conversion between camelCase, PascalCase, snake_case and more -*- lexical-binding: t -*-
 
-;; Copyright (C) 2020 sximada
+;; Copyright (C) 2020 TakesxiSximada
 
-;; Author: sximada <sximada@gmail.com>
-;; Maintainer: sximada <sximada@gmail.com>
-;; Repository: https://gist.github.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27
-;; Version: 7
-;; Date: 2020-05-02
+;; Author: TakesxiSximada <8707279+TakesxiSximada@users.noreply.github.com>
+;; Maintainer: TakesxiSximada <8707279+TakesxiSximada@users.noreply.github.com>
+;; Repository: https://gist.github.com/TakesxiSximada/e8a10244aac6308de1323d1f6685658b
+;; Version: 8
+;; Package-Version: 20200506.2255
+;; Package-Requires: ((emacs "25.1") (dash "2.16.0") (s "1.12.0"))
+;; Date: 2020-05-06
 
 ;; change-case.el is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
