@@ -25,7 +25,8 @@
 
 ;;; Commentary:
 
-;; This library implements the change case functions.
+;; Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.case
+;; and others by Emacs Lisp.
 
 ;;; Code:
 (require 'dash)
@@ -163,7 +164,7 @@
    (lambda (pair) (substring sentence
 			     (car pair)
 			     (car (cdr pair))))
-   (change-case-get-index-pair-list 
+   (change-case-get-index-pair-list
     (change-case-pascal-case-get-head-char-index-list sentence 0))))
 
 
@@ -281,14 +282,14 @@
 (defun change-case (&optional start end)
   (interactive (if (use-region-p)
 		   (list (region-beginning) (region-end))
-		 (if-let (bounds (bounds-of-thing-at-point 'symbol)) 
+		 (if-let (bounds (bounds-of-thing-at-point 'symbol))
 		     (list (car bounds) (cdr bounds))
 		   (list (point-min (point-max))))))
 
   (let ((sentence (buffer-substring-no-properties start end))
 	(parser (change-case-select-parser))
 	(renderer (change-case-select-renderer)))
-    (change-case-edit 
+    (change-case-edit
      start end
      (funcall renderer (funcall parser sentence)))
     (change-case-update-parser-and-renderer-default parser
