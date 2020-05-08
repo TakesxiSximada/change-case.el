@@ -24,6 +24,18 @@ Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.
 
 **This package is not yet melpa packaging.**
 
+### Install by quelpa
+
+```
+(require 'quelpa)
+
+(quelpa '(change-case :fetcher git :url "git@gist.github.com:e8a10244aac6308de1323d1f6685658b.git"))
+```
+
+See here for how to install quelpa itself https://github.com/quelpa/quelpa#installing-packages .
+
+### Install by package.el
+
 1. Download [change-case.el](https://gist.githubusercontent.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27/raw/9bbd7c116540133b945bc70e9fb38912fa8a72ff/change-case.el).
 2. M-x package-install-file RET /PATH/TO/DOWNLOADED/change-case.el RET
 
