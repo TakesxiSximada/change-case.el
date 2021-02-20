@@ -2,13 +2,13 @@
 
 ;; Copyright (C) 2020 TakesxiSximada
 
+;; This package is distributed in the hope that it will be useful, but WITHOUT
+;; ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+;; or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public
+;; License for more details.
+;;
 ;; You should have received a copy of the GNU General Public License
 ;; along with change-case.el.  If not, see http://www.gnu.org/licenses.
-
-;;; Commentary:
-
-;; Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.case
-;; and others by Emacs Lisp.
 
 ;;; Code:
 (require 'ert)

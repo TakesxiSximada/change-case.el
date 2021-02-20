@@ -5,12 +5,12 @@
 ;; Author: TakesxiSximada <8707279+TakesxiSximada@users.noreply.github.com>
 ;; Maintainer: TakesxiSximada <8707279+TakesxiSximada@users.noreply.github.com>
 ;; Repository: https://gist.github.com/TakesxiSximada/e8a10244aac6308de1323d1f6685658b
-;; Version: 8
-;; Package-Version: 20200506.2255
+;; Version: 9
+;; Package-Version: 20210220.0000
 ;; Package-Requires: ((emacs "25.1") (dash "2.16.0") (s "1.12.0"))
-;; Date: 2020-05-06
+;; Date: 2021-02-20
 
-;; change-case.el is free software; you can redistribute it and/or modify it
+;; This package is free software; you can redistribute it and/or modify it
 ;; under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation; either version 3, or (at your option)
 ;; any later version.
