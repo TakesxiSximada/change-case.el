@@ -29,8 +29,9 @@
 ;; and others by Emacs Lisp.
 
 ;;; Code:
+(require 'rx)
+
 (require 'dash)
-(require 'ert)
 (require 's)
 
 
@@ -50,19 +51,6 @@
 (defun change-case-dotted-case-render (word-list)
   (string-join word-list change-case-dotted-case-separator))
 
-
-;; test
-(ert-deftest change-case-dotted-case-parse-test ()
-  (should
-   (equal '("change" "case" "el")
-	  (change-case-dotted-case-parse "change.case.el"))))
-
-(ert-deftest change-case-dotted-case-renderer-test ()
-  (should
-   (string-equal "change.case.el"
-		 (change-case-dotted-case-render '("change" "case" "el")))))
-
-
 ;;; path/case
 (defvar change-case-path-case-separator "/"
   "Used as delimiter in path case.")
@@ -73,19 +61,6 @@
 (defun change-case-path-case-render (word-list)
   (string-join word-list change-case-path-case-separator))
 
-
-;; test
-(ert-deftest change-case-path-case-parse-test ()
-  (should
-   (equal '("change" "case" "el")
-	  (change-case-path-case-parse "change/case/el"))))
-
-(ert-deftest change-case-path-case-renderer-test ()
-  (should
-   (string-equal "change/case/el"
-		 (change-case-path-case-render '("change" "case" "el")))))
-
-
 ;;; snake_case
 (defvar change-case-snake-case-separator "_"
   "Used as delimiter in snake case.")
@@ -93,23 +68,9 @@
 (defun change-case-snake-case-parse (sentence)
   (s-split change-case-snake-case-separator sentence))
 
-
 (defun change-case-snake-case-render (word-list)
   (string-join (mapcar 'downcase word-list)
 	       change-case-snake-case-separator))
-
-
-;; test
-(ert-deftest change-case-snake-case-parse-test ()
-  (should
-   (equal '("change" "case" "el")
-	  (change-case-snake-case-parse "change_case_el"))))
-
-(ert-deftest change-case-snake-case-renderer-test ()
-  (should
-   (string-equal "change_case_el"
-		 (change-case-snake-case-render '("change" "case" "el")))))
-
 
 ;;; kebab-case
 (defvar change-case-kebab-case-separator "-"
@@ -118,77 +79,38 @@
 (defun change-case-kebab-case-parse (sentence)
   (s-split change-case-kebab-case-separator sentence))
 
-
 (defun change-case-kebab-case-render (word-list)
   (string-join (mapcar 'downcase word-list) change-case-kebab-case-separator))
 
-
-;; test
-(ert-deftest change-case-kebab-case-parse-test ()
-  (should
-   (equal '("change" "case" "el")
-	  (change-case-kebab-case-parse "change-case-el"))))
-
-(ert-deftest change-case-kebab-case-renderer-test ()
-  (should
-   (string-equal "change-case-el"
-		 (change-case-kebab-case-render '("change" "case" "el")))))
-
-
 ;;; PascalCase
-(defvar change-case-upper-case-pattern "[A-Z]"
-  "Used as delimiter in pascal case.")
+(defun change-case--get-pascal-case-inner-partition (sentence &optional start)
+  (let ((case-fold-search nil))
+    (if-let ((pos (string-match (rx upper-case) sentence (or start 1))))
+	(cons pos
+	      (change-case--get-pascal-case-inner-partition sentence (+ pos 1))))))
 
-(defun change-case-get-index (sentence pos)
-  (if (= pos 0) 0
-    (let* ((case-fold-search nil))
-      (string-match change-case-upper-case-pattern
-		    sentence pos))))
+(defun change-case--get-pascal-case-partition (sentence &optional start)
+  (cons 0
+	(append (change-case--get-pascal-case-inner-partition sentence start)
+		(cons (length sentence) nil))))
 
-
-(defun change-case-get-index-pair-list (num-list)
-  (cons (-slice num-list 0 2)
-	(if-let* ((after (-slice num-list 1)))
-	    (change-case-get-index-pair-list after))))
-
-
-(defun change-case-pascal-case-get-head-char-index-list (sentence pos)
-  "Returns a list of the position of the first character of PascalCase in the string"
-  (if-let* ((n (change-case-get-index sentence pos))
-	    (n+1 (+ n 1)))
-      (cons n (change-case-pascal-case-get-head-char-index-list sentence n+1))))
-
+(defun change-case--get-pair-list (sequence)
+  (if-let ((start (nth 0 sequence))
+	   (end (nth 1 sequence)))
+      (cons
+       (cons start end)
+       (change-case--get-pair-list (cdr sequence)))))
 
 (defun change-case-pascal-case-parse (sentence)
   (mapcar
    (lambda (pair) (substring sentence
 			     (car pair)
-			     (car (cdr pair))))
-   (change-case-get-index-pair-list
-    (change-case-pascal-case-get-head-char-index-list sentence 0))))
-
+			     (cdr pair)))
+   (change-case--get-pair-list
+    (change-case--get-pascal-case-partition sentence))))
 
 (defun change-case-pascal-case-render (word-list)
   (string-join (mapcar 'capitalize word-list)))
-
-
-;; test
-(ert-deftest change-case-pascal-case-get-head-char-index-list-test ()
-  (should
-   (equal '(0 6 10)
-	  (change-case-pascal-case-get-head-char-index-list "ChangeCaseEl" 0))))
-
-
-(ert-deftest change-case-pascal-case-parse-test ()
-  (should
-   (equal '("Change" "Case" "El")
-	  (change-case-pascal-case-parse "ChangeCaseEl"))))
-
-(ert-deftest change-case-pascal-case-renderer-test ()
-  (should
-   (string-equal "ChangeCaseEl"
-		 (change-case-pascal-case-render '("change" "case" "el")))))
-
 
 ;;; camelCase
 (defun change-case-camel-case-parse (sentence)
@@ -198,18 +120,6 @@
   (concat
    (downcase (car word-list))
    (change-case-pascal-case-render (cdr word-list))))
-
-
-;; test
-(ert-deftest change-case-camel-case-parse-test ()
-  (should
-   (equal '("change" "Case" "El")
-	  (change-case-camel-case-parse "changeCaseEl"))))
-
-(ert-deftest change-case-camel-case-renderer-test ()
-  (should
-   (string-equal "changeCaseEl"
-		 (change-case-camel-case-render '("change" "case" "el")))))
 
 ;;; Options
 (defvar change-case-parser-alist
@@ -230,7 +140,6 @@
     ("camelCase" . change-case-camel-case-render))
   "List of valid render functions.")
 
-
 ;;; U/I
 (defcustom change-case-parser-prompt "change-case: parser:"
   "Prompt used in the parser function selection UI."
@@ -239,7 +148,6 @@
 (defcustom change-case-renderer-prompt "change-case: renderer:"
   "Prompt used in the render function selection UI."
   :group 'change-case)
-
 
 (defcustom change-case-parser-default "dotted.case"
   "Default parser."
