@@ -2,11 +2,14 @@
 
 ** Release Versions
 
+*** Version 9 (2021-02-20)
+
+- Fixed to failed pascal case conversion functions.
+
 *** Version 8 (2020-05-06)
 
 - Update docstring.
 - Update example GIF animation.
-
 *** Version 7 (2020-05-02)
 
 - Fixed pascal case bug.
