@@ -1,11 +1,12 @@
-# change-case.el
+#+TITLE: change-case.el
 
 Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.case and others by Emacs Lisp. Inspired by https://github.com/blakeembrey/change-case/ .
-#### Screenshot
 
-![example](https://media.giphy.com/media/fW4lOLLIfCk7OleiyW/source.gif "example")
+* Screenshot
 
-## Supported case
+[[https://media.giphy.com/media/fW4lOLLIfCk7OleiyW/source.gif]]
+
+* Supported case
 
 - [x] dotted.case
 - [x] path/case
@@ -14,32 +15,32 @@ Transform a string between camelCase, PascalCase, snake_case, kebab-case, doted.
 - [x] PascalCase
 - [x] camelCase
 
-## Dependencies
+* Dependencies
 
 - dash
 - s
 - ert
 
-## Install
+* Install
 
-**This package is not yet melpa packaging.**
+*This package is not yet melpa packaging.*
 
-### Install by quelpa
+** Install by quelpa
 
-```
+#+begin_src emacs-lisp
 (require 'quelpa)
 
 (quelpa '(change-case :fetcher git :url "git@gist.github.com:e8a10244aac6308de1323d1f6685658b.git"))
-```
+#+end_src
 
-See here for how to install quelpa itself https://github.com/quelpa/quelpa#installing-packages .
+See here for how to install quelpa itself [[https://github.com/quelpa/quelpa#installing-packages]].
 
-### Install by package.el
+** Install by package.el
 
-1. Download [change-case.el](https://gist.githubusercontent.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27/raw/9bbd7c116540133b945bc70e9fb38912fa8a72ff/change-case.el).
+1. Download [[https://gist.githubusercontent.com/sximada/819e066481b57f8ea6e5a8ec92fb9c27/raw/9bbd7c116540133b945bc70e9fb38912fa8a72ff/change-case.el][change-case.el]].
 2. M-x package-install-file RET /PATH/TO/DOWNLOADED/change-case.el RET
 
-## Testing
+* Testing
 
 Using ert.
 
@@ -47,7 +48,8 @@ Using ert.
 2. Run M-x ert on change-case.el buffer.
 
 Output example::
-```
+#+caption: Output example
+#+begin_example
 Selector: t
 Passed:  13
 Failed:  0
@@ -59,9 +61,9 @@ Finished.
 Finished at:  2020-04-29 15:28:31+0900
 
 .............
-```
+#+end_example
 
-## Bug report and Contributing
+* Bug report and Contributing
 
 - Feature request :: https://github.com/TakesxiSximada/change-case.el/issues
 - Bug report :: https://github.com/TakesxiSximada/change-case.el/issues
