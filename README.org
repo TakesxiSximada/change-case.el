@@ -68,3 +68,16 @@ Finished at:  2020-04-29 15:28:31+0900
 - Feature request :: https://github.com/TakesxiSximada/change-case.el/issues
 - Bug report :: https://github.com/TakesxiSximada/change-case.el/issues
 - Pull request and Patch :: https://github.com/TakesxiSximada/change-case.el/pulls
+
+* Other solutions
+
+This project was started to inspired by [[https://github.com/blakeembrey/change-case/]].
+There are other projects with similar purposes.
+
+** Emacs Lisp
+
+- https://github.com/HKey/caseformat
+
+** TypeScript
+
+- https://github.com/blakeembrey/change-case
