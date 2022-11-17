@@ -158,10 +158,10 @@
   :group 'change-case)
 
 (defun change-case-select-ui (prompt choices default)
-  (ido-completing-read prompt
-		       choices
-		       nil nil nil nil
-		       default))
+  (completing-read prompt
+		   choices
+		   nil nil nil nil
+		   default))
 
 (defun change-case-select-parser ()
   (cdr (assoc (change-case-select-ui change-case-parser-prompt
