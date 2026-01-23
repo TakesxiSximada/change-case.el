@@ -192,7 +192,7 @@
 		   (list (region-beginning) (region-end))
 		 (if-let (bounds (bounds-of-thing-at-point 'symbol))
 		     (list (car bounds) (cdr bounds))
-		   (list (point-min (point-max))))))
+		   (list (point-min) (point-max)))))
 
   (let ((sentence (buffer-substring-no-properties start end))
 	(parser (change-case-select-parser))
